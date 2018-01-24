@@ -1,12 +1,12 @@
 package com.ivotai.simplemusic.song
 
-import com.ivotai.simplemusic.ViewState1
+import com.ivotai.simplemusic.ViewState
 import io.reactivex.Observable
 
-class GetSong(private val userRepo: SongRepo) {
-    fun execute(): Observable<ViewState1<List<Song>>> = userRepo.get()
+class GetSong(private val songRepo: SongRepo) {
+    fun execute(): Observable<ViewState<List<Song>>> = songRepo.get()
             .toObservable()
-            .map { ViewState1(data = it) }
-            .onErrorReturn { ViewState1(error = it) }
-            .startWith(ViewState1())
+            .map { ViewState(data = it) }
+            .onErrorReturn { ViewState(error = it) }
+            .startWith(ViewState())
 }

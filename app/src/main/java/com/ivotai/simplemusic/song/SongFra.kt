@@ -1,15 +1,14 @@
 package com.ivotai.simplemusic.song
 
-import android.Manifest
-import android.app.Activity
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.hwangjr.rxbus.RxBus
+import com.ivotai.simplemusic.PlaySongEvent
 import com.ivotai.simplemusic.R
-import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.fra_song.*
 
 
@@ -26,15 +25,12 @@ class SongFra : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = songAdapter
 
-        RxPermissions(activity as Activity)
-                .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe({ granted ->
-                    if (granted) { // Always true pre-M
-                        // I can control the camera now
-                    } else {
-                        // Oups permission denied
-                    }
-                })
+        songAdapter.setOnItemClickListener { adapter, view, position -> songAdapter.getItem(position)
+                .apply {
+                    RxBus.get().post(PlaySongEvent(this!!))
+                }
+
+        }
 
         loadSong()
     }
@@ -46,10 +42,12 @@ class SongFra : Fragment() {
         GetSong(songRepo).execute().subscribe {
             when {
                 it.isLoading() -> {
+
 //                    loadingView.show()
 //                    retryView.hide()
                 }
                 it.isError() -> {
+                    ""
 //                    loadingView.hide()
 //                    retryView.show()
                 }
