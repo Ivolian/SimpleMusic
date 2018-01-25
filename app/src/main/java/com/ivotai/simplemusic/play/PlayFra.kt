@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.hwangjr.rxbus.RxBus
 import com.hwangjr.rxbus.annotation.Subscribe
+import com.ivotai.simplemusic.MusicPlayer
 import com.ivotai.simplemusic.PlaySongEvent
 import com.ivotai.simplemusic.R
 
@@ -31,14 +32,14 @@ class PlayFra : Fragment() {
     @Subscribe
     fun play(event: PlaySongEvent) {
         try {
-
-            if (player.isPlaying) {
-                player.reset()
-            }
-            val song = event.song
-            player.setDataSource(song.data)
-            player.prepare()
-            player.start()
+            MusicPlayer.play(event.song)
+//            if (player.isPlaying) {
+//                player.reset()
+//            }
+//            val song = event.song
+//            player.setDataSource(song.data)
+//            player.prepare()
+//            player.start()
         } catch (e: Exception) {
             ""
         }

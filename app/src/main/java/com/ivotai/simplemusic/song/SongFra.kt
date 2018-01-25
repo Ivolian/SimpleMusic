@@ -2,6 +2,7 @@ package com.ivotai.simplemusic.song
 
 import android.content.ContentUris
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -10,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.hwangjr.rxbus.RxBus
+import com.ivotai.simplemusic.MusicPlayer
 import com.ivotai.simplemusic.PlaySongEvent
 import com.ivotai.simplemusic.R
 import jp.wasabeef.blurry.Blurry
@@ -57,6 +59,7 @@ class SongFra : Fragment() {
 //                    retryView.show()
                 }
                 it.isSuccess() -> {
+                    MusicPlayer.mPlayList = it.data!!
                     setBg(it.data!![2])
 //                    loadingView.hide()
 //                    retryView.hide()
@@ -72,7 +75,7 @@ class SongFra : Fragment() {
         val bitmap = BitmapFactory.decodeStream(activity!!.contentResolver.openInputStream(uri))
         Blurry.with(context) .radius(20)
                 .sampling(8)
-//                .color(Color.parseColor("#A6000000"))
+                .color(Color.parseColor("#80dddddd"))
                 .from(bitmap).into(imageView);
 
 //        val blur = BlurBuilder.blur(context,bitmap)
