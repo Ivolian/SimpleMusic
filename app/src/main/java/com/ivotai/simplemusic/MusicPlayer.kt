@@ -6,7 +6,12 @@ import java.io.IOException
 import java.util.*
 
 
-object MusicPlayer {
+class MusicPlayer {
+
+
+        var songs: List<Song> = ArrayList()
+        var currentIndex = -1
+
 
     private var mPlayer = MediaPlayer()
 
@@ -14,12 +19,10 @@ object MusicPlayer {
 
     val progress get() = mPlayer.currentPosition
 
-    var mPlayList: List<Song> = ArrayList()
-    var currentIndex = -1
 
     val isInit get() = currentIndex != -1
     val hasLast get() = isInit && currentIndex > 0
-    val hasNext get() = isInit && currentIndex < mPlayList.size - 1
+    val hasNext get() = isInit && currentIndex < songs.size - 1
 
     fun play(): Boolean {
 //        if (isPaused) {
@@ -27,7 +30,7 @@ object MusicPlayer {
 //            notifyPlayStatusChanged(true)
 //            return true
 //        }
-        val song = mPlayList[currentIndex]
+        val song = songs[currentIndex]
         try {
             mPlayer.reset()
             mPlayer.setDataSource(song.data)
@@ -45,7 +48,7 @@ object MusicPlayer {
     }
 
     fun play(song:Song): Boolean {
-        return play(mPlayList.indexOf(song))
+        return play(songs.indexOf(song))
     }
 
     fun playLast(): Boolean {

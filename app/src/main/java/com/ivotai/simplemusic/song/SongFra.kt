@@ -1,19 +1,20 @@
 package com.ivotai.simplemusic.song
 
-import android.content.ContentUris
+import android.content.*
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.os.IBinder
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.hwangjr.rxbus.RxBus
-import com.ivotai.simplemusic.MusicPlayer
+import com.ivotai.simplemusic.MusicService
 import com.ivotai.simplemusic.PlaySongEvent
 import com.ivotai.simplemusic.R
+import io.reactivex.rxkotlin.subscribeBy
 import jp.wasabeef.blurry.Blurry
 import kotlinx.android.synthetic.main.fra_song.*
 
@@ -39,14 +40,43 @@ class SongFra : Fragment() {
 
         }
 
+
         loadSong()
+
+        iivLast.setOnClickListener{ mPlaybackService!!.playLast()}
+        iivNext.setOnClickListener{ mPlaybackService!!.playNext()}
+
     }
+
+    var mPlaybackService:MusicService?=null
+
+    private val mConnection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            // This is called when the connection with the service has been
+            // established, giving us the service object we can use to
+            // interact with the service.  Because we have bound to a explicit
+            // service that we know is running in our own process, we can
+            // cast its IBinder to a concrete class and directly access it.
+            mPlaybackService = (service as MusicService.LocalBinder).service as MusicService
+
+        }
+
+        override fun onServiceDisconnected(className: ComponentName) {
+            // This is called when the connection with the service has been
+            // unexpectedly disconnected -- that is, its process crashed.
+            // Because it is running in our same process, we should never
+            // see this happen.
+            mPlaybackService = null
+
+        }
+    }
+
 
     private fun loadSong(){
         val songRepo = SongRepoImpl(context!!)
 
 
-        GetSong(songRepo).execute().subscribe {
+        GetSongUseCase(songRepo).execute().subscribeBy {
             when {
                 it.isLoading() -> {
 
@@ -59,7 +89,13 @@ class SongFra : Fragment() {
 //                    retryView.show()
                 }
                 it.isSuccess() -> {
-                    MusicPlayer.mPlayList = it.data!!
+
+                    context!!.bindService(Intent(context, MusicService::class.java).apply {
+                        this.putExtra("songs",it.data as ArrayList<Song>)
+                    }, mConnection, Context.BIND_AUTO_CREATE)
+
+
+//                    MusicPlayer.song = it.data!!
                     setBg(it.data!![2])
 //                    loadingView.hide()
 //                    retryView.hide()
@@ -75,11 +111,12 @@ class SongFra : Fragment() {
         val bitmap = BitmapFactory.decodeStream(activity!!.contentResolver.openInputStream(uri))
         Blurry.with(context) .radius(20)
                 .sampling(8)
-                .color(Color.parseColor("#80dddddd"))
+//                .color(Color.parseColor("#80dddddd"))
                 .from(bitmap).into(imageView);
 
 //        val blur = BlurBuilder.blur(context,bitmap)
 //        root.background = BitmapDrawable(blur)
+
     }
 
 

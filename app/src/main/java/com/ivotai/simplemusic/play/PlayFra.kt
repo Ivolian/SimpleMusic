@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.hwangjr.rxbus.RxBus
 import com.hwangjr.rxbus.annotation.Subscribe
-import com.ivotai.simplemusic.MusicPlayer
 import com.ivotai.simplemusic.PlaySongEvent
 import com.ivotai.simplemusic.R
 
@@ -32,7 +31,7 @@ class PlayFra : Fragment() {
     @Subscribe
     fun play(event: PlaySongEvent) {
         try {
-            MusicPlayer.play(event.song)
+//            MusicPlayer.play(event.song)
 //            if (player.isPlaying) {
 //                player.reset()
 //            }
