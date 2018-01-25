@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.ivotai.simplemusic.MusicService
 import com.ivotai.simplemusic.R
+import com.ivotai.simplemusic.general.ImageHelper
 import com.ivotai.simplemusic.song.model.Song
 import com.ivotai.simplemusic.song.repo.SongRepoImpl
 import com.ivotai.simplemusic.song.useCase.GetSong
@@ -33,23 +34,25 @@ class SongFra : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = songAdapter
 
-        songAdapter.setOnItemClickListener { _, _, position -> songAdapter.getItem(position)
-                .apply {
-//                    RxBus.get().post(PlaySongEvent(this!!))
-                    setBg(song = this!!)
-                }
-
+        tvTitle.text = ""
+        tvArtist.text = ""
+        songAdapter.setOnItemClickListener { _, _, position ->
+            val song = songAdapter.getItem(position)!!
+            setBg(song = song)
+            ivAlbum.setImageURI(ImageHelper.songToUri(song = song))
+            tvTitle.text = song.title
+            tvArtist.text = song.artist
         }
 
 
         loadSong()
 
-        iivLast.setOnClickListener{ mPlaybackService!!.playLast()}
-        iivNext.setOnClickListener{ mPlaybackService!!.playNext()}
+        iivLast.setOnClickListener { mPlaybackService!!.playLast() }
+        iivNext.setOnClickListener { mPlaybackService!!.playNext() }
 
     }
 
-    var mPlaybackService:MusicService?=null
+    var mPlaybackService: MusicService? = null
 
     private val mConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -58,7 +61,7 @@ class SongFra : Fragment() {
             // interact with the service.  Because we have bound to a explicit
             // service that we know is running in our own process, we can
             // cast its IBinder to a concrete class and directly access it.
-            mPlaybackService = (service as MusicService.LocalBinder).service as MusicService
+            mPlaybackService = (service as MusicService.LocalBinder).service
 
         }
 
@@ -72,7 +75,7 @@ class SongFra : Fragment() {
         }
     }
 
-    private fun loadSong(){
+    private fun loadSong() {
         val songRepo = SongRepoImpl(context!!)
 
 
@@ -91,7 +94,7 @@ class SongFra : Fragment() {
                 it.isSuccess() -> {
 
                     context!!.bindService(Intent(context, MusicService::class.java).apply {
-                        this.putExtra("songs",it.data as ArrayList<Song>)
+                        this.putExtra("songs", it.data as ArrayList<Song>)
                     }, mConnection, Context.BIND_AUTO_CREATE)
 
 
@@ -105,14 +108,14 @@ class SongFra : Fragment() {
         }
     }
 
-    private fun setBg(song: Song){
+    private fun setBg(song: Song) {
         val id = song.albumId
         val uri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), id)
-        val bitmap = BitmapFactory.decodeStream(activity!!.contentResolver.openInputStream(uri))
-        Blurry.with(context) .radius(20)
+        val bitmap = BitmapFactory.decodeStream(context!!.contentResolver.openInputStream(uri))
+        Blurry.with(context).radius(20)
                 .sampling(8)
 //                .color(Color.parseColor("#80dddddd"))
-                .from(bitmap).into(imageView);
+                .from(bitmap).into(ivBg);
 
 //        val blur = BlurBuilder.blur(context,bitmap)
 //        root.background = BitmapDrawable(blur)

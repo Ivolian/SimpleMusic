@@ -7,6 +7,5 @@ class Song(
         val artist: String,
         val data: String,
         val albumId: Long
-): Serializable {
+): Serializable
 
-}
