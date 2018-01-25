@@ -1,4 +1,4 @@
-package com.ivotai.simplemusic.play
+package com.ivotai.simplemusic.playing
 
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -31,7 +31,7 @@ class PlayFra : Fragment() {
     @Subscribe
     fun play(event: PlaySongEvent) {
         try {
-//            MusicPlayer.play(event.song)
+//            RealPlayer.play(event.song)
 //            if (player.isPlaying) {
 //                player.reset()
 //            }

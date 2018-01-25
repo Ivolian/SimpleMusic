@@ -4,7 +4,9 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import com.ivotai.simplemusic.song.Song
+import com.ivotai.simplemusic.player.RealPlayer
+import com.ivotai.simplemusic.player.Player
+import com.ivotai.simplemusic.song.model.Song
 
 
 
@@ -41,7 +43,7 @@ class MusicService : Service(), Player {
 
     // ============== binder ==============
 
-    private val musicPlayer = MusicPlayer()
+    private val musicPlayer = RealPlayer()
 
     private fun initPlayer(songs: List<Song>) {
         musicPlayer.songs = songs

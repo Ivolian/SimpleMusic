@@ -1,4 +1,4 @@
-package com.ivotai.simplemusic.song
+package com.ivotai.simplemusic.song.ui
 
 import android.content.*
 import android.graphics.BitmapFactory
@@ -10,10 +10,11 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.hwangjr.rxbus.RxBus
 import com.ivotai.simplemusic.MusicService
-import com.ivotai.simplemusic.PlaySongEvent
 import com.ivotai.simplemusic.R
+import com.ivotai.simplemusic.song.model.Song
+import com.ivotai.simplemusic.song.repo.SongRepoImpl
+import com.ivotai.simplemusic.song.useCase.GetSong
 import io.reactivex.rxkotlin.subscribeBy
 import jp.wasabeef.blurry.Blurry
 import kotlinx.android.synthetic.main.fra_song.*
@@ -34,8 +35,8 @@ class SongFra : Fragment() {
 
         songAdapter.setOnItemClickListener { _, _, position -> songAdapter.getItem(position)
                 .apply {
-                    RxBus.get().post(PlaySongEvent(this!!))
-                    setBg(song = this)
+//                    RxBus.get().post(PlaySongEvent(this!!))
+                    setBg(song = this!!)
                 }
 
         }
@@ -71,12 +72,11 @@ class SongFra : Fragment() {
         }
     }
 
-
     private fun loadSong(){
         val songRepo = SongRepoImpl(context!!)
 
 
-        GetSongUseCase(songRepo).execute().subscribeBy {
+        GetSong(songRepo).execute().subscribeBy {
             when {
                 it.isLoading() -> {
 
@@ -95,7 +95,7 @@ class SongFra : Fragment() {
                     }, mConnection, Context.BIND_AUTO_CREATE)
 
 
-//                    MusicPlayer.song = it.data!!
+//                    RealPlayer.song = it.data!!
                     setBg(it.data!![2])
 //                    loadingView.hide()
 //                    retryView.hide()
@@ -105,7 +105,7 @@ class SongFra : Fragment() {
         }
     }
 
-    private fun setBg(song:Song){
+    private fun setBg(song: Song){
         val id = song.albumId
         val uri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), id)
         val bitmap = BitmapFactory.decodeStream(activity!!.contentResolver.openInputStream(uri))
@@ -118,7 +118,5 @@ class SongFra : Fragment() {
 //        root.background = BitmapDrawable(blur)
 
     }
-
-
 
 }

@@ -1,7 +1,8 @@
-package com.ivotai.simplemusic.song
+package com.ivotai.simplemusic.song.repo
 
 import android.content.Context
 import android.provider.MediaStore
+import com.ivotai.simplemusic.song.model.Song
 import io.reactivex.Single
 
 
@@ -19,7 +20,7 @@ class SongRepoImpl(private val context: Context) : SongRepo {
                     ),
                     null,
                     null,
-                    MediaStore.Audio.Media.TITLE + " DESC")
+                    MediaStore.Audio.Media.TITLE + " ASC")
             val result = ArrayList<Song>()
             if (cursor != null && cursor.moveToFirst()) {
                 do {

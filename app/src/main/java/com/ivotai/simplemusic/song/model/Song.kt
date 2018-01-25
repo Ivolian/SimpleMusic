@@ -1,4 +1,4 @@
-package com.ivotai.simplemusic.song
+package com.ivotai.simplemusic.song.model
 
 import java.io.Serializable
 

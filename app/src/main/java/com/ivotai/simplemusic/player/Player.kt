@@ -1,4 +1,4 @@
-package com.ivotai.simplemusic
+package com.ivotai.simplemusic.player
 
 interface Player {
 

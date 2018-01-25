@@ -1,9 +1,11 @@
-package com.ivotai.simplemusic.song
+package com.ivotai.simplemusic.song.useCase
 
-import com.ivotai.simplemusic.ViewState
+import com.ivotai.simplemusic.general.ViewState
+import com.ivotai.simplemusic.song.model.Song
+import com.ivotai.simplemusic.song.repo.SongRepo
 import io.reactivex.Observable
 
-class GetSongUseCase(private val songRepo: SongRepo) {
+class GetSong(private val songRepo: SongRepo) {
     fun execute(): Observable<ViewState<List<Song>>> = songRepo.get()
             .toObservable()
             .map { ViewState(data = it) }

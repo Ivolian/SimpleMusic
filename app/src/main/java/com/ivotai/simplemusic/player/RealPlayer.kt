@@ -1,12 +1,12 @@
-package com.ivotai.simplemusic
+package com.ivotai.simplemusic.player
 
 import android.media.MediaPlayer
-import com.ivotai.simplemusic.song.Song
+import com.ivotai.simplemusic.song.model.Song
 import java.io.IOException
 import java.util.*
 
 
-class MusicPlayer {
+class RealPlayer {
 
 
         var songs: List<Song> = ArrayList()
@@ -47,7 +47,7 @@ class MusicPlayer {
         return play()
     }
 
-    fun play(song:Song): Boolean {
+    fun play(song: Song): Boolean {
         return play(songs.indexOf(song))
     }
 

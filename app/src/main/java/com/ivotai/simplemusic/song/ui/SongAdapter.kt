@@ -1,4 +1,4 @@
-package com.ivotai.simplemusic.song
+package com.ivotai.simplemusic.song.ui
 
 import android.content.ContentUris
 import android.net.Uri
@@ -6,6 +6,7 @@ import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.ivotai.simplemusic.R
+import com.ivotai.simplemusic.song.model.Song
 
 class SongAdapter : BaseQuickAdapter<Song, BaseViewHolder>(R.layout.item_song, null) {
 
