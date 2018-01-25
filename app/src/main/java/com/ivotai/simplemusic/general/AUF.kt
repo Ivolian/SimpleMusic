@@ -13,7 +13,9 @@ abstract class AUF : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fragment)
         doBeforeAddFra()
-        addFra()
+        if (savedInstanceState == null) {
+            addFra()
+        }
     }
 
     private fun addFra() {

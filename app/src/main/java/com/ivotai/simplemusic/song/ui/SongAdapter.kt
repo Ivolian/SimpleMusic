@@ -14,7 +14,7 @@ class SongAdapter : BaseQuickAdapter<Song, BaseViewHolder>(R.layout.item_song, n
         helper.setText(R.id.tvArtist, item.artist)
         helper.setText(R.id.tvTitle, item.title)
         val uri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), item.albumId);
-        Glide.with(mContext).load(uri).into(helper.getView(R.id.ivCover))
+        Glide.with(mContext).load(uri).into(helper.getView(R.id.ivAlbum))
     }
 
 }
