@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import com.ivotai.simplemusic.MusicService
 import com.ivotai.simplemusic.R
 import com.ivotai.simplemusic.general.ImageHelper
+import com.ivotai.simplemusic.player.Player
 import com.ivotai.simplemusic.song.model.Song
 import com.ivotai.simplemusic.song.repo.SongRepoImpl
 import com.ivotai.simplemusic.song.useCase.GetSong
@@ -38,40 +39,29 @@ class SongFra : Fragment() {
         tvArtist.text = ""
         songAdapter.setOnItemClickListener { _, _, position ->
             val song = songAdapter.getItem(position)!!
-            setBg(song = song)
-            ivAlbum.setImageURI(ImageHelper.songToUri(song = song))
-            tvTitle.text = song.title
-            tvArtist.text = song.artist
+                notifyUi(song)
+            player!!.play(song)
         }
 
 
         loadSong()
 
-        iivLast.setOnClickListener { mPlaybackService!!.playLast() }
-        iivNext.setOnClickListener { mPlaybackService!!.playNext() }
+        iivLast.setOnClickListener { player!!.playLast() }
+        iivNext.setOnClickListener { player!!.playNext() }
 
     }
 
-    var mPlaybackService: MusicService? = null
+    var player: Player? = null
 
-    private val mConnection = object : ServiceConnection {
+
+    private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            // This is called when the connection with the service has been
-            // established, giving us the service object we can use to
-            // interact with the service.  Because we have bound to a explicit
-            // service that we know is running in our own process, we can
-            // cast its IBinder to a concrete class and directly access it.
-            mPlaybackService = (service as MusicService.LocalBinder).service
+            player = (service as MusicService.LocalBinder).service
 
         }
 
         override fun onServiceDisconnected(className: ComponentName) {
-            // This is called when the connection with the service has been
-            // unexpectedly disconnected -- that is, its process crashed.
-            // Because it is running in our same process, we should never
-            // see this happen.
-            mPlaybackService = null
-
+            player = null
         }
     }
 
@@ -81,21 +71,11 @@ class SongFra : Fragment() {
 
         GetSong(songRepo).execute().subscribeBy {
             when {
-                it.isLoading() -> {
-
-//                    loadingView.show()
-//                    retryView.hide()
-                }
-                it.isError() -> {
-                    ""
-//                    loadingView.hide()
-//                    retryView.show()
-                }
                 it.isSuccess() -> {
 
                     context!!.bindService(Intent(context, MusicService::class.java).apply {
                         this.putExtra("songs", it.data as ArrayList<Song>)
-                    }, mConnection, Context.BIND_AUTO_CREATE)
+                    }, connection, Context.BIND_AUTO_CREATE)
 
 
 //                    RealPlayer.song = it.data!!
@@ -107,6 +87,14 @@ class SongFra : Fragment() {
             }
         }
     }
+
+    private fun notifyUi(song:Song){
+        setBg(song = song)
+        ivAlbum.setImageURI(ImageHelper.songToUri(song = song))
+        tvTitle.text = song.title
+        tvArtist.text = song.artist
+    }
+
 
     private fun setBg(song: Song) {
         val id = song.albumId

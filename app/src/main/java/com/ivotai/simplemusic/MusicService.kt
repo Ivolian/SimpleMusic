@@ -4,13 +4,12 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import com.ivotai.simplemusic.player.RealPlayer
 import com.ivotai.simplemusic.player.Player
+import com.ivotai.simplemusic.player.RealPlayer
 import com.ivotai.simplemusic.song.model.Song
 
 
-
-class MusicService : Service(), Player {
+class MusicService(private val player: Player = RealPlayer()) : Service(), Player by player {
 
 
     // ============== binder ==============
@@ -23,6 +22,7 @@ class MusicService : Service(), Player {
 
     override fun onBind(intent: Intent): IBinder {
         val songs = intent.getSerializableExtra("songs")
+        initPlayer(songs = songs as ArrayList<Song>)
         return mBinder
     }
 
@@ -31,6 +31,7 @@ class MusicService : Service(), Player {
 
     override fun onCreate() {
         super.onCreate()
+
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
@@ -43,23 +44,11 @@ class MusicService : Service(), Player {
 
     // ============== binder ==============
 
-    private val musicPlayer = RealPlayer()
 
     private fun initPlayer(songs: List<Song>) {
-        musicPlayer.songs = songs
-        musicPlayer.currentIndex = -1
+        player as RealPlayer
+        player.songs = songs
+
     }
 
-    // ============== binder ==============
-    override fun play() {
-    }
-
-    override fun playNext() {
-    }
-
-    override fun playLast() {
-    }
-
-    override fun seekTo(progress: Int) {
-    }
 }

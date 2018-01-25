@@ -2,7 +2,7 @@ package com.ivotai.simplemusic.song.model
 
 import java.io.Serializable
 
-class Song(
+data class Song(
         val title: String,
         val artist: String,
         val data: String,

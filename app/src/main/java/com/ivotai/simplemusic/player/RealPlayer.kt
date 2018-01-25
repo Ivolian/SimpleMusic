@@ -6,7 +6,7 @@ import java.io.IOException
 import java.util.*
 
 
-class RealPlayer {
+class RealPlayer : Player {
 
 
         var songs: List<Song> = ArrayList()
@@ -24,7 +24,7 @@ class RealPlayer {
     val hasLast get() = isInit && currentIndex > 0
     val hasNext get() = isInit && currentIndex < songs.size - 1
 
-    fun play(): Boolean {
+   override fun play() {
 //        if (isPaused) {
 //            mPlayer!!.start()
 //            notifyPlayStatusChanged(true)
@@ -37,44 +37,48 @@ class RealPlayer {
             mPlayer.prepare()
             mPlayer.start()
         } catch (e: IOException) {
-            return false
+
         }
-        return true
+
     }
 
-    fun play(index:Int): Boolean {
+   override fun play(index:Int) {
         currentIndex = index
-        return play()
+         play()
     }
 
-    fun play(song: Song): Boolean {
-        return play(songs.indexOf(song))
+    override  fun play(song: Song)  {
+         play(songs.indexOf(song))
     }
 
-    fun playLast(): Boolean {
+    override fun playLast() {
         if (hasLast) {
             currentIndex--
             play()
-            return true
+
         }
-        return false
+
     }
 
-    fun playNext(): Boolean {
+    override fun playNext()  {
         if (hasNext) {
             currentIndex++
             play()
-            return true
+
         }
-        return false
+
     }
 
-    fun pause(): Boolean {
+    fun pause() {
         if (mPlayer.isPlaying) {
             mPlayer.pause()
-            return true
+
         }
-        return false
+
+    }
+
+    override fun seekTo(progress: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     fun releasePlayer() {
