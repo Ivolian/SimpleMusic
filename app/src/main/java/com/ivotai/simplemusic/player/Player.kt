@@ -10,5 +10,7 @@ interface Player {
     fun playNext()
     fun playLast()
     fun seekTo(progress:Int)
-
+    fun nextSong():Song
+    fun lastSong():Song
+    fun currentSong():Song
 }

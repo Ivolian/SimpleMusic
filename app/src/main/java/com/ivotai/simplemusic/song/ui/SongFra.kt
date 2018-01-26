@@ -7,14 +7,17 @@ import android.content.ServiceConnection
 import android.graphics.Color
 import android.os.Bundle
 import android.os.IBinder
-import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.blankj.utilcode.util.ConvertUtils
+import com.hwangjr.rxbus.RxBus
+import com.hwangjr.rxbus.annotation.Subscribe
 import com.ivotai.simplemusic.MusicService
 import com.ivotai.simplemusic.R
+import com.ivotai.simplemusic.event.SongChangeEvent
+import com.ivotai.simplemusic.general.BaseFra
 import com.ivotai.simplemusic.general.ImageHelper
 import com.ivotai.simplemusic.player.Player
 import com.ivotai.simplemusic.song.model.Song
@@ -25,9 +28,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fra_song.*
 
 
-
-
-class SongFra : Fragment() {
+class SongFra : BaseFra() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fra_song, container, false)
@@ -38,8 +39,13 @@ class SongFra : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
-        iivLast.setOnClickListener { player.playLast() }
-        iivNext.setOnClickListener { player.playNext() }
+        iivLast.setOnClickListener { player.playLast()
+
+        }
+        iivNext.setOnClickListener {
+            player.playNext()
+
+        }
         loadSong()
     }
 
@@ -52,15 +58,16 @@ class SongFra : Fragment() {
         ivAlbum.setBackgroundColor(Color.TRANSPARENT)
         songAdapter.setOnItemClickListener { _, _, position ->
             val song = songAdapter.getItem(position)!!
-            notifyUi(song)
+            RxBus.get().post(SongChangeEvent(song))
             player.play(song)
         }
 
+
         recyclerView.addItemDecoration(
                 HorizontalDividerItemDecoration.Builder(context)
-                        .color(Color.parseColor("#409e9e9e"))
+                        .color(Color.parseColor("#609e9e9e"))
                         .size(1)
-                        .margin(ConvertUtils.dp2px(96f),0)
+                        .margin(ConvertUtils.dp2px(96f), 0)
                         .build())
     }
 
@@ -100,11 +107,16 @@ class SongFra : Fragment() {
         }
     }
 
-    private fun notifyUi(song: Song) {
-        ImageHelper.getBitmapComposer(context!!, song).into(ivBg)
+    @Subscribe
+    fun notifyUi(event: SongChangeEvent) {
+        val song = event.song
+        ImageHelper.getBitmapComposer(context!!, song)?.into(ivBg)
         ivAlbum.setImageURI(ImageHelper.songToUri(song = song))
         tvTitle.text = song.title
         tvArtist.text = song.artist
+
+        songAdapter.current = song
+        songAdapter.notifyDataSetChanged()
     }
 
 }
