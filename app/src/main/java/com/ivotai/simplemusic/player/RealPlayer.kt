@@ -20,6 +20,13 @@ class RealPlayer : Player {
 
     val progress get() = mPlayer.currentPosition
 
+    override fun toggle() {
+        if (mPlayer.isPlaying){
+            pause()
+        }else{
+            mPlayer.start()
+        }
+    }
 
     val isInit get() = currentIndex != -1
     val hasLast get() = isInit && currentIndex > 0

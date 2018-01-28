@@ -9,6 +9,7 @@ interface Player {
     fun play(song:Song)
     fun playNext()
     fun playLast()
+    fun toggle()
     fun seekTo(progress:Int)
     fun nextSong():Song
     fun lastSong():Song
