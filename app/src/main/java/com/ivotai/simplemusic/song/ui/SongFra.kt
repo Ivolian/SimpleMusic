@@ -8,17 +8,15 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.IBinder
 import android.support.v7.widget.LinearLayoutManager
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import com.blankj.utilcode.util.ConvertUtils
-import com.hwangjr.rxbus.RxBus
 import com.hwangjr.rxbus.annotation.Subscribe
 import com.ivotai.simplemusic.MusicService
 import com.ivotai.simplemusic.R
-import com.ivotai.simplemusic.event.SongChangeEvent
+import com.ivotai.simplemusic.event.SongSwitchEvent
 import com.ivotai.simplemusic.general.BaseFra
 import com.ivotai.simplemusic.general.ImageHelper
+import com.ivotai.simplemusic.general.Key
 import com.ivotai.simplemusic.player.Player
 import com.ivotai.simplemusic.song.model.Song
 import com.ivotai.simplemusic.song.repo.SongRepoImpl
@@ -30,45 +28,55 @@ import kotlinx.android.synthetic.main.fra_song.*
 
 class SongFra : BaseFra() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fra_song, container, false)
-    }
-
-    private val songAdapter = SongAdapter()
+    override fun layoutId() = R.layout.fra_song
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
-        iivLast.setOnClickListener { player.playLast()
-
-        }
-        iivNext.setOnClickListener {
-            player.playNext()
-
-        }
+        addListener()
         loadSong()
+
+        ivAlbum.setBackgroundColor(Color.TRANSPARENT)
+        tvTitle.text = ""
+        tvArtist.text = ""
     }
+
+    private val songAdapter = SongAdapter()
 
     private fun initRecyclerView() {
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = songAdapter
 
-        tvTitle.text = ""
-        tvArtist.text = ""
-        ivAlbum.setBackgroundColor(Color.TRANSPARENT)
-        songAdapter.setOnItemClickListener { _, _, position ->
-            val song = songAdapter.getItem(position)!!
-            RxBus.get().post(SongChangeEvent(song))
-            player.play(song)
-        }
-
+        songAdapter.setOnItemClickListener { _, _, position -> player.play(songAdapter.getItem(position)!!) }
 
         recyclerView.addItemDecoration(
                 HorizontalDividerItemDecoration.Builder(context)
-                        .color(Color.parseColor("#609e9e9e"))
+                        .color(Color.parseColor("#809e9e9e"))
                         .size(1)
                         .margin(ConvertUtils.dp2px(96f), 0)
                         .build())
+    }
+
+    private fun addListener() {
+        iivLast.setOnClickListener {
+            player.playLast()
+        }
+        iivNext.setOnClickListener {
+            player.playNext()
+        }
+    }
+
+    private fun loadSong() {
+        val songRepo = SongRepoImpl(context!!)
+        GetSong(songRepo).execute().subscribeBy {
+            when {
+                it.isSuccess() -> {
+                    songAdapter.setNewData(it.data)
+                    bindService(it.data!!)
+
+                }
+            }
+        }
     }
 
     lateinit var player: Player
@@ -76,6 +84,7 @@ class SongFra : BaseFra() {
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             player = (service as MusicService.LocalBinder).service
+            player.play(0)
         }
 
         override fun onServiceDisconnected(className: ComponentName) {
@@ -83,40 +92,24 @@ class SongFra : BaseFra() {
         }
     }
 
-    private fun bindMusicService(songs: List<Song>) {
+    private fun bindService(songs: List<Song>) {
         context!!.bindService(
                 Intent(context, MusicService::class.java).apply {
-                    this.putExtra("songs", songs as ArrayList<Song>)
+                    this.putExtra(Key.SONGS, songs as ArrayList<Song>)
                 },
                 connection,
                 Context.BIND_AUTO_CREATE)
     }
 
-    private fun loadSong() {
-
-        val songRepo = SongRepoImpl(context!!)
-
-
-        GetSong(songRepo).execute().subscribeBy {
-            when {
-                it.isSuccess() -> {
-                    songAdapter.setNewData(it.data)
-                    bindMusicService(it.data!!)
-                }
-            }
-        }
-    }
-
     @Subscribe
-    fun notifyUi(event: SongChangeEvent) {
+    fun songSwitchAction(event: SongSwitchEvent) {
         val song = event.song
         ImageHelper.getBitmapComposer(context!!, song)?.into(ivBg)
         ivAlbum.setImageURI(ImageHelper.songToUri(song = song))
         tvTitle.text = song.title
+        tvTitle.isSelected = true
         tvArtist.text = song.artist
-
-        songAdapter.current = song
-        songAdapter.notifyDataSetChanged()
+        songAdapter.songSwitchAction(event)
     }
 
 }

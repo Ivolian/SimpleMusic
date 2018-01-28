@@ -10,8 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -19,90 +21,106 @@
         android:layout_height="0dp"
         android:background="#30424242"
         android:paddingTop="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
+        app:layout_constraintBottom_toTopOf="@+id/playBar"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ivBg" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
-    <ImageView
-        android:id="@+id/ivAlbum"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline" />
 
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:textColor="@color/material_white"
-        android:textSize="14dp"
-        app:layout_constraintBottom_toTopOf="@+id/tvArtist"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toEndOf="@+id/ivAlbum"
-        app:layout_constraintTop_toTopOf="@+id/ivAlbum" />
-
-    <TextView
-        android:id="@+id/tvArtist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="16dp"
-        android:textColor="@color/material_white"
-        android:textSize="12dp"
-        app:layout_constraintBottom_toBottomOf="@+id/ivAlbum"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toEndOf="@+id/ivAlbum" />
-
-    <com.mikepenz.iconics.view.IconicsImageView
-        android:id="@+id/iivLast"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
-        android:layout_marginEnd="32dp"
-
-        android:clickable="true"
-        app:iiv_color="@color/material_white"
-        app:iiv_icon="faw-fast-backward"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/iivPlay"
-        app:layout_constraintTop_toTopOf="@+id/guideline" />
-
-    <com.mikepenz.iconics.view.IconicsImageView
-        android:id="@+id/iivPlay"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
-        android:layout_marginEnd="32dp"
-
-        app:iiv_color="@color/material_white"
-        app:iiv_icon="faw-play"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/iivNext"
-        app:layout_constraintTop_toTopOf="@+id/guideline" />
-
-    <com.mikepenz.iconics.view.IconicsImageView
-        android:id="@+id/iivNext"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
-        android:layout_marginEnd="16dp"
-        app:iiv_color="@color/material_white"
-        app:iiv_icon="faw-fast-forward"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/playBar"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline" />
+        app:layout_constraintStart_toStartOf="parent">
 
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="64dp" />
+        <ImageView
+            android:id="@+id/ivAlbum"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="6dp"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:textColor="@color/material_white"
+            android:textSize="15dp"
+            app:layout_constraintBottom_toTopOf="@+id/tvArtist"
+            app:layout_constraintEnd_toStartOf="@+id/iivLast"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/ivAlbum"
+            app:layout_constraintTop_toTopOf="@+id/ivAlbum" />
+
+        <TextView
+            android:id="@+id/tvArtist"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/material_white"
+            android:textSize="12dp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivAlbum"
+            app:layout_constraintEnd_toStartOf="@+id/iivLast"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/ivAlbum" />
+
+        <com.mikepenz.iconics.view.IconicsImageView
+            android:id="@+id/iivLast"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginBottom="8dp"
+
+            android:layout_marginEnd="48dp"
+            android:layout_marginTop="8dp"
+            android:clickable="true"
+            app:iiv_color="@color/material_white"
+            app:iiv_icon="faw-fast-backward"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/iivPlay"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.mikepenz.iconics.view.IconicsImageView
+            android:id="@+id/iivPlay"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginBottom="8dp"
+
+            android:layout_marginEnd="48dp"
+            android:layout_marginTop="8dp"
+            app:iiv_color="@color/material_white"
+            app:iiv_icon="faw-play"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/iivNext"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.mikepenz.iconics.view.IconicsImageView
+            android:id="@+id/iivNext"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="48dp"
+            android:layout_marginTop="8dp"
+            app:iiv_color="@color/material_white"
+            app:iiv_icon="faw-fast-forward"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>
 

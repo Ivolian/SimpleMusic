@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.ivotai.simplemusic.R
+import com.ivotai.simplemusic.event.SongSwitchEvent
 import com.ivotai.simplemusic.general.ImageHelper
 import com.ivotai.simplemusic.song.model.Song
 
@@ -20,11 +21,14 @@ class SongAdapter : BaseQuickAdapter<Song, BaseViewHolder>(R.layout.item_song, n
         helper.setText(R.id.tvArtist, item.artist)
         helper.setText(R.id.tvTitle, item.title)
         Glide.with(mContext).load(ImageHelper.songToUri(item)).into(helper.getView(R.id.ivAlbum))
+        highlightPlaying(helper, item)
+    }
 
-        if ( item == current) {
-            val ivAblum = helper.getView<ImageView>(R.id.ivAlbum)
-            var b = ivAblum.drawable as? BitmapDrawable
-            b?.let {
+    private fun highlightPlaying(helper: BaseViewHolder, item: Song) {
+        if (item == current) {
+            val ivAlbum = helper.getView<ImageView>(R.id.ivAlbum)
+            val it = ivAlbum.drawable as? BitmapDrawable
+            it?.let {
                 Palette.from(it.bitmap).generate { palette ->
                     ""
                     palette.lightVibrantSwatch?.rgb?.let {
@@ -33,10 +37,14 @@ class SongAdapter : BaseQuickAdapter<Song, BaseViewHolder>(R.layout.item_song, n
                 }
             }
 
-        }else{
+        } else {
             helper.getView<TextView>(R.id.tvTitle).setTextColor(Color.WHITE)
-
         }
+    }
+
+    fun songSwitchAction(event: SongSwitchEvent) {
+        current = event.song
+        notifyDataSetChanged()
     }
 
 }

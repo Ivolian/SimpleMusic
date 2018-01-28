@@ -2,7 +2,7 @@ package com.ivotai.simplemusic.player
 
 import android.media.MediaPlayer
 import com.hwangjr.rxbus.RxBus
-import com.ivotai.simplemusic.event.SongChangeEvent
+import com.ivotai.simplemusic.event.SongSwitchEvent
 import com.ivotai.simplemusic.song.model.Song
 import java.util.*
 
@@ -40,6 +40,7 @@ class RealPlayer : Player {
         } catch (e: Exception) {
             ""
         }
+        RxBus.get().post(SongSwitchEvent(song))
 
     }
 
@@ -56,7 +57,7 @@ class RealPlayer : Player {
         if (hasLast) {
             currentIndex--
             play()
-            RxBus.get().post(SongChangeEvent(currentSong()))
+            RxBus.get().post(SongSwitchEvent(currentSong()))
         }
 
     }
@@ -65,7 +66,7 @@ class RealPlayer : Player {
         if (hasNext) {
             currentIndex++
             play()
-            RxBus.get().post(SongChangeEvent(currentSong()))
+            RxBus.get().post(SongSwitchEvent(currentSong()))
         }
     }
 
